@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Link Shortener</title>
+  <style>
+    body { font-family: sans-serif; max-width: 420px; margin: 4rem auto; padding: 0 1rem; text-align: center; }
+    input, button { width: 100%; padding: 12px; margin: 8px 0; font-size: 16px; box-sizing: border-box; }
+    button { background: #0051c3; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    #res { margin-top: 1rem; font-weight: bold; word-break: break-all; }
+  </style>
+</head>
+<body>
+  <h1>Shorten a Link</h1>
+  <input id="url" type="url" placeholder="https://example.com" required>
+  <input id="slug" type="text" placeholder="Custom ending (optional)">
+  <button onclick="go()">Shorten</button>
+  <div id="res"></div>
+  <script>
+    async function go() {
+      const url = document.getElementById('url').value;
+      const slug = document.getElementById('slug').value;
+      const res = document.getElementById('res');
+      if (!url) return alert('Enter a URL');
+      res.textContent = 'Creating...';
+      const r = await fetch('/api/shorten', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, slug })
+      });
+      const d = await r.json();
+      res.innerHTML = d.shortUrl ? `<a href="${d.shortUrl}" target="_blank">${d.shortUrl}</a>` : (d.error || 'Error');
+    }
+  </script>
+</body>
+</html>
